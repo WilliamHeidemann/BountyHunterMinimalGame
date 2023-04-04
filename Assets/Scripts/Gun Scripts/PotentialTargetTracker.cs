@@ -12,8 +12,8 @@ public class PotentialTargetTracker : MonoBehaviour
     public GameObject PotentialTarget { get; private set; }
     
     private Camera _cam;
-    private float _minDistanceFromGun = 5f;
-    private float _minDistanceFromMouse = 2f;
+    private const float MaxDistanceFromGun = 5f; // Inject gun range
+    private const float MaxDistanceFromMouse = 2f;
 
     private AimTargetTracker _aimTargetTracker;
     
@@ -53,13 +53,14 @@ public class PotentialTargetTracker : MonoBehaviour
     {
         var mousePosition = _cam.ScreenToWorldPoint(Input.mousePosition);
         mousePosition.z = 0;
-        var potentialTargets = GameObject.FindGameObjectsWithTag("Killable");
-        nearest = potentialTargets.Where(x => Vector2.Distance(x.transform.position, transform.position) < _minDistanceFromGun).OrderBy(x => Vector2.Distance(x.transform.position, mousePosition)).FirstOrDefault();
+        var potentialTargets = GameObject.FindGameObjectsWithTag("Killable").ToList();
+        potentialTargets.Remove(transform.parent.gameObject);
+        nearest = potentialTargets.Where(x => Vector2.Distance(x.transform.position, transform.position) < MaxDistanceFromGun).OrderBy(x => Vector2.Distance(x.transform.position, mousePosition)).FirstOrDefault();
         return mousePosition;
     }
     
     private bool IsNearMouse(Vector3 target, Vector3 mousePosition)
     {
-        return Vector2.Distance(target, mousePosition) < _minDistanceFromMouse;
+        return Vector2.Distance(target, mousePosition) < MaxDistanceFromMouse;
     }
 }
