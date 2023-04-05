@@ -5,7 +5,7 @@ using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
-public class PotentialTargetTracker : MonoBehaviour
+public class PotentialTargetTracker : NetworkBehaviour
 {
     public delegate void OnTargetChangedDelegate(GameObject previousTarget, GameObject newTarget);
     public event OnTargetChangedDelegate OnPotentialTargetChanged;
@@ -22,16 +22,15 @@ public class PotentialTargetTracker : MonoBehaviour
         _cam = Camera.main;
         _aimTargetTracker = GetComponent<AimTargetTracker>();
     }
-    
+
     private void Update()
     {
-        if (_aimTargetTracker.aimTarget != null) return;
+        if (!IsOwner) return; 
+        if (_aimTargetTracker.AimTarget != null) return;
         var target = FindTarget();
         if (target != PotentialTarget)
         {
-            var previousTarget = PotentialTarget;
-            PotentialTarget = target;
-            OnPotentialTargetChanged?.Invoke(previousTarget, target);
+            SetPotentialTarget(target);
         }
     }
     
@@ -39,7 +38,7 @@ public class PotentialTargetTracker : MonoBehaviour
     {
         var previousTarget = PotentialTarget;
         PotentialTarget = newTarget;
-        OnPotentialTargetChanged?.Invoke(previousTarget, PotentialTarget);
+        OnPotentialTargetChanged?.Invoke(previousTarget, newTarget);
     }
 
     private GameObject FindTarget()

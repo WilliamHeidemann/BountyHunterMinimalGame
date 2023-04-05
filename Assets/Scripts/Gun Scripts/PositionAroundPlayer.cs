@@ -31,6 +31,7 @@ public class PositionAroundPlayer : MonoBehaviour
 
     private void Update()
     {
+        print(_hasTarget);
         if (_hasTarget)
         {
             var circleVector = Vector3.Normalize(_target.position - owner.position);

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Shooting : MonoBehaviour
+public class Shooting : NetworkBehaviour
 {
     // When the aimTarget is set (current) invoke aimStarted (shooter, target)
     // When the aim is cancelled invoke aimCancelled (shooter, target)
@@ -13,7 +13,7 @@ public class Shooting : MonoBehaviour
     private PotentialTargetTracker _potentialTargetTracker;
     private AimTargetTracker _aimTargetTracker;
     private Coroutine _aimCoroutine;
-    private TargetDespawner _targetDeSpawner;
+    private NetworkDespawner _networkDespawner;
     // field to store information about gun aim time
     
     private void Start()
@@ -21,7 +21,7 @@ public class Shooting : MonoBehaviour
         _potentialTargetTracker = GetComponent<PotentialTargetTracker>();
         _aimTargetTracker = GetComponent<AimTargetTracker>();
         _aimTargetTracker.OnAimTargetSetDelegate += CheckAimTarget;
-        _targetDeSpawner = GetComponent<TargetDespawner>();
+        _networkDespawner = FindObjectOfType<NetworkDespawner>();
     }
 
     private void CheckAimTarget(GameObject previousTarget, GameObject newTarget)
@@ -52,6 +52,6 @@ public class Shooting : MonoBehaviour
         _aimTargetTracker.SetAimTarget(null);
         _potentialTargetTracker.SetPotentialTarget(null);
         var targetNetworkObjectId = target.gameObject.GetComponent<NetworkObject>().NetworkObjectId;
-        _targetDeSpawner.DeSpawnServerRpc(targetNetworkObjectId);
+        _networkDespawner.DeSpawnServerRpc(targetNetworkObjectId);
     }
 }

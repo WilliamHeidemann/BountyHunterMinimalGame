@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class AimTargetTracker : MonoBehaviour
 {
-    public GameObject aimTarget { get; private set; }
+    public GameObject AimTarget { get; private set; }
     public event PotentialTargetTracker.OnTargetChangedDelegate OnAimTargetSetDelegate;
     private PotentialTargetTracker _potentialTargetTracker;
 
@@ -27,9 +27,9 @@ public class AimTargetTracker : MonoBehaviour
 
     public void SetAimTarget(GameObject newTarget)
     {
-        var previousTarget = aimTarget;
-        aimTarget = newTarget;
-        OnAimTargetSetDelegate?.Invoke(previousTarget, aimTarget);
+        var previousTarget = AimTarget;
+        AimTarget = newTarget;
+        OnAimTargetSetDelegate?.Invoke(previousTarget, AimTarget);
     }
 
     private bool HasPotentialTarget()
