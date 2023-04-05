@@ -6,7 +6,6 @@ using UnityEngine;
 public class PositionAroundPlayer : NetworkBehaviour
 {
     [SerializeField] private Transform owner;
-    private bool _hasTarget;
     private Transform _target;
     private PotentialTargetTracker _potentialTargetTracker;
     

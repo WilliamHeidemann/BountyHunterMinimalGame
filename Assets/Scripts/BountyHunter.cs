@@ -7,27 +7,24 @@ using UnityEngine;
 
 public class BountyHunter : NetworkBehaviour
 {
-    //private IHunt _aiming;
-    private NetworkVariable<int> _netBountyOnHead = new(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private readonly NetworkVariable<int> _bounty = new(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private TextMeshPro _bountySizeText;
+    private Shooting _shooting;
 
     private void Start()
     {
-        // _aiming = GetComponentInChildren<IHunt>();
-        // _aiming.KillLanded += OnKill;
         _bountySizeText = GetComponentInChildren<TextMeshPro>();
+        _shooting = GetComponentInChildren<Shooting>();
+        _shooting.OnKill += IncreaseBounty;
     }
 
     public override void OnNetworkSpawn()
     {
-        _netBountyOnHead.OnValueChanged += (previous, current) => _bountySizeText.text = current.ToString();
+        _bounty.OnValueChanged += (previous, current) => _bountySizeText.text = current.ToString();
     }
 
-    private void OnKill(GameObject target, bool wasInDefense)
+    private void IncreaseBounty(GameObject killer, GameObject target)
     {
-        if (!wasInDefense)
-        {
-            _netBountyOnHead.Value += 1;
-        }
+        _bounty.Value += 1;
     }
 }

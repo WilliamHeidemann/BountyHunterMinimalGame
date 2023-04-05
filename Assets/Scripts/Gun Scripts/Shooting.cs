@@ -15,6 +15,8 @@ public class Shooting : NetworkBehaviour
     private Coroutine _aimCoroutine;
     private NetworkDespawner _networkDespawner;
     // field to store information about gun aim time
+    public delegate void OnKillDelegate(GameObject killer, GameObject target);
+    public event OnKillDelegate OnKill;
     
     private void Start()
     {
@@ -22,6 +24,8 @@ public class Shooting : NetworkBehaviour
         _aimTargetTracker = GetComponent<AimTargetTracker>();
         _aimTargetTracker.OnAimTargetSetDelegate += CheckAimTarget;
         _networkDespawner = FindObjectOfType<NetworkDespawner>();
+
+        OnKill += ResetTrackers;
     }
 
     private void CheckAimTarget(GameObject previousTarget, GameObject newTarget)
@@ -49,9 +53,16 @@ public class Shooting : NetworkBehaviour
     private IEnumerator AimCountdown(GameObject target)
     {
         yield return new WaitForSeconds(1); // Replace with gun aim time
-        _aimTargetTracker.SetAimTarget(null);
-        _potentialTargetTracker.SetPotentialTarget(null);
+        OnKill?.Invoke(gameObject, target);
+
+        // Network Despawning
         var targetNetworkObjectId = target.gameObject.GetComponent<NetworkObject>().NetworkObjectId;
         _networkDespawner.DeSpawnServerRpc(targetNetworkObjectId);
+    }
+
+    private void ResetTrackers(GameObject killer, GameObject target)
+    {
+        _aimTargetTracker.SetAimTarget(null);
+        _potentialTargetTracker.SetPotentialTarget(null);
     }
 }
