@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PositionAroundPlayer : MonoBehaviour
+public class PositionAroundPlayer : NetworkBehaviour
 {
     [SerializeField] private Transform owner;
     private bool _hasTarget;
@@ -17,22 +18,19 @@ public class PositionAroundPlayer : MonoBehaviour
 
     private void SetTarget(GameObject previousTarget, GameObject newTarget)
     {
-        if (newTarget == null)
+        if (newTarget)
         {
-            _hasTarget = false;
-            transform.position = owner.position;
+            _target = newTarget.transform;
         }
         else
         {
-            _hasTarget = true;
-            _target = newTarget.transform;
+            transform.position = owner.position;
         }
     }
 
     private void Update()
     {
-        print(_hasTarget);
-        if (_hasTarget)
+        if (_target)
         {
             var circleVector = Vector3.Normalize(_target.position - owner.position);
             transform.position = circleVector + owner.position;
