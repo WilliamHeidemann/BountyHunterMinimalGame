@@ -23,16 +23,22 @@ public class PositionAroundPlayer : NetworkBehaviour
         }
         else
         {
+            _target = null;
             transform.position = owner.position;
         }
     }
 
     private void Update()
     {
+        if (!IsOwner) return;
         if (_target)
         {
             var circleVector = Vector3.Normalize(_target.position - owner.position);
             transform.position = circleVector + owner.position;
+        }
+        else
+        {
+            transform.position = owner.position;
         }
     }
 }

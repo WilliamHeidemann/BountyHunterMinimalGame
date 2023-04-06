@@ -16,6 +16,7 @@ public class BountyHunter : NetworkBehaviour
         _bountySizeText = GetComponentInChildren<TextMeshPro>();
         _shooting = GetComponentInChildren<Shooting>();
         _shooting.OnKill += IncreaseBounty;
+        _bountySizeText.text = _bounty.Value.ToString();
     }
 
     public override void OnNetworkSpawn()
